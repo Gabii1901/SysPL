@@ -93,6 +93,6 @@ Isso criará um executável dentro da pasta `dist/`.
 
 Este projeto é de uso livre. Sinta-se à vontade para contribuir e aprimorar! 🎉
 
-Feito com ❤️ por Seu Nome 🚀
+Feito com ❤️ por Gabriela 🚀
 
 
