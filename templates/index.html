@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório de Requisições e Notas Fiscais</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #fff;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #88E788;
+            color: black;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #ddd;
+        }
+        .filtros {
+            margin-bottom: 10px;
+        }
+        .filtros label {
+            font-weight: bold;
+        }
+        .botao-filtrar {
+            background-color: green;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        .botao-limpar {
+            background-color: red;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+        
+    </style>
+</head>
+<body>
+    <button id="botaoExportar" onclick="exportarExcel()">📂 Exportar Excel</button>
+
+    <script>
+        function exportarExcel() {
+            let params = new URLSearchParams(window.location.search);
+            window.location.href = "/exportar?" + params.toString();
+        }
+    </script>
+    
+    <style>
+        #botaoExportar {
+            position: fixed;
+            bottom: 20px; /* Distância do rodapé */
+            right: 20px; /* Distância da lateral direita */
+            background-color: blue;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease-in-out;
+        }
+    
+        #botaoExportar:hover {
+            transform: scale(1.1);
+        }
+    </style>
+    
+    <h2>Relatório de Requisições e Notas Fiscais</h2>
+
+    <div class="filtros">
+        <label for="filtroDataInicio">Data Início:</label>
+        <input type="date" id="filtroDataInicio" value="{{ request.args.get('data_inicio', '') or '' }}">
+        
+        <label for="filtroDataFim">Data Fim:</label>
+        <input type="date" id="filtroDataFim" value="{{ request.args.get('data_fim', '') or '' }}">     
+        
+        <label for="filtroDescricao">Descrição do Produto:</label>
+        <input type="text" id="filtroDescricao" placeholder="Digite a descrição" value="{{ request.args.get('descricao_produto', '') }}">
+        
+        <button class="botao-filtrar" onclick="aplicarFiltros()">Filtrar</button>
+        <button class="botao-limpar" onclick="limparFiltros()">Limpar Filtros</button>
+    </div>
+
+    <table id="tabelaRelatorio">
+        <thead>
+            <tr>
+                <th>Data Requisição</th>
+                <th>Código Produto</th>
+                <th>Descrição</th>
+                <th>Quantidade Requisição</th>
+                <th>Custo Unitário</th>
+                <th>Total Requisição</th>
+                <th>Número NF de Compra</th>
+                <th>Data NF de Compra</th>
+                <th>Quantidade NF de Compra</th>
+                <th>Valor Unitário NF</th>
+                <th>Desconto NF de Compra</th>
+                <th>Total NF de Compra</th>
+                <th>ICMS NF de Compra</th>
+                <th>ICMS Unitário</th>
+                <th>PIS</th>
+                <th>COFINS</th>
+                <th>ICMS QNT REQ.</th>
+                <th>BC PIS REQ.</th>
+                <th>Alíquota PIS</th>
+                <th>PIS FINAL</th>
+                <th>BC COFINS REQ.</th>
+                <th>Alíquota COFINS</th>
+                <th>COFINS FINAL</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in dados_combinados %}
+            <tr>
+                <td>{{ item[0] }}</td>  
+                <td>{{ item[1] }}</td>  
+                <td>{{ item[2] }}</td> 
+                <td>{{ "{:,.2f}".format(item[3]).replace(',', 'X').replace('.', ',').replace('X', '.') }}</td>
+                <td>R$ {{ "{:,.2f}".format(item[4] if item[4] is not none else 0.0).replace(',', 'X').replace('.', ',').replace('X', '.') }}</td> 
+                <td>R$ {{ "{:,.2f}".format(item[5] if item[5] is not none else 0.0).replace(',', 'X').replace('.', ',').replace('X', '.') }}</td>  
+                <td>{{ item[6] }}</td>  
+                <td>{{ item[7] }}</td>  
+                <td>{{ "{:,.2f}".format(item[3]).replace(',', 'X').replace('.', ',').replace('X', '.') }}</td>  
+                <td>R$ {{ "{:,.2f}".format(item[9] if item[9] is not none else 0.0).replace(',', 'X').replace('.', ',').replace('X', '.') }}</td>  
+                <td>R$ {{ "{:,.2f}".format(item[10] if item[10] is not none else 0.0).replace(',', 'X').replace('.', ',').replace('X', '.') }}</td> 
+                <td>R$ {{ "{:,.2f}".format(item[11] if item[11] is not none else 0.0).replace(',', 'X').replace('.', ',').replace('X', '.') }}</td> 
+                <td>R$ {{ "{:,.2f}".format(item[12] if item[12] is not none else 0.0).replace(',', 'X').replace('.', ',').replace('X', '.') }}</td> 
+                <td>R$ {{ "{:,.2f}".format(item[13] if item[13] is not none else 0.0).replace(',', 'X').replace('.', ',').replace('X', '.') }}</td> 
+                <td>R$ {{ "{:,.2f}".format(item[14] if item[14] is not none else 0.0).replace(',', 'X').replace('.', ',').replace('X', '.') }}</td>
+                <td>R$ {{ "{:,.2f}".format(item[15] if item[15] is not none else 0.0).replace(',', 'X').replace('.', ',').replace('X', '.') }}</td> 
+                <td>R$ {{ "{:,.2f}".format(item[16] if item[16] is not none else 0.0).replace(',', 'X').replace('.', ',').replace('X', '.') }}</td> 
+                <td>R$ {{ "{:,.2f}".format(item[17] if item[17] is not none else 0.0).replace(',', 'X').replace('.', ',').replace('X', '.') }}</td> 
+                <td>1,65%</td> 
+                <td>R$ {{ "{:,.2f}".format(item[19] if item[19] is not none else 0.0).replace(',', 'X').replace('.', ',').replace('X', '.') }}</td> 
+                <td>R$ {{ "{:,.2f}".format(item[20] if item[20] is not none else 0.0).replace(',', 'X').replace('.', ',').replace('X', '.') }}</td> 
+                <td>7,60%</td> 
+                <td>R$ {{ "{:,.2f}".format(item[22] if item[22] is not none else 0.0).replace(',', 'X').replace('.', ',').replace('X', '.') }}</td> 
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+        function aplicarFiltros() {
+            let params = new URLSearchParams(window.location.search);
+
+            let dataInicio = document.getElementById("filtroDataInicio").value;
+            let dataFim = document.getElementById("filtroDataFim").value;
+            let descricaoProduto = document.getElementById("filtroDescricao").value.trim().toLowerCase();
+
+            if (dataInicio) params.set("data_inicio", dataInicio);
+            else params.delete("data_inicio");
+
+            if (dataFim) params.set("data_fim", dataFim);
+            else params.delete("data_fim");
+
+            if (descricaoProduto) params.set("descricao_produto", descricaoProduto);
+            else params.delete("descricao_produto");
+
+            window.location.search = params.toString();
+        }
+
+        function limparFiltros() {
+            let inputs = document.querySelectorAll('.filtros input');
+            inputs.forEach(input => input.value = '');
+            aplicarFiltros();
+        }
+        function exportarExcel() {
+            let params = new URLSearchParams(window.location.search);
+            window.location.href = "/exportar?" + params.toString();
+        }
+    </script>
+
+</body>
+</html>
