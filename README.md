@@ -7,7 +7,7 @@ Este projeto é um aplicativo web desenvolvido com **Flask**, que permite a leit
 ## 🚀 **Funcionalidades**
 
 ✅ Leitura de arquivos **DBF** com requisições e notas fiscais  
-✅ Filtros por **data, código do produto e descrição**  
+✅ Filtros por **data e descrição**  
 ✅ Exibição dos dados em uma **tabela interativa**  
 ✅ Exportação dos dados filtrados para **Excel (.xlsx)**  
 ✅ Encerramento automático do servidor ao fechar a aba do navegador  
